@@ -136,4 +136,29 @@ input:focus, select:focus {
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
 .modal-content { background: #fff; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; border: 1px solid var(--azul); }
 
+
 .divisor { height: 1px; background: #e9ecef; margin: 25px 0; }
+
+.area-acoes {
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-excel {
+    background-color: #1d6f42; /* Verde oficial do Excel */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-excel:active {
+    transform: scale(0.98);
+}
