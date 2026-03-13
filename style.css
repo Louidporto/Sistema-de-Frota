@@ -33,24 +33,36 @@ body {
     border-bottom: 1px solid #e9ecef;
 }
 
-h1 { 
+/* Ajuste do Título: Menos espaço, mais peso */
+.titulo-sistema { 
     color: var(--azul) !important;
     text-transform: uppercase;
     margin: 0;
-    font-size: 1.6rem;
-    letter-spacing: 1px;
-    font-weight: 700;
+    font-size: 1.8rem; /* Tamanho levemente maior */
+    letter-spacing: -0.5px; /* Reduzi o espaçamento para as letras ficarem mais juntas e fortes */
+    font-weight: 800; /* Peso extra-bold para um visual tecnológico */
+    line-height: 1;
 }
 
+/* Logo com tamanho imponente */
 .logo-container {
-    width: 80px;
-    height: 80px;
+    width: 110px;  /* Aumentado para 110px */
+    height: 110px;
+    margin-bottom: 5px;
 }
 
 #logoEmpresa {
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+
+/* Media query para telas um pouco maiores (Tablet/Desktop pequeno) */
+@media (min-width: 400px) {
+    .header-logo {
+        flex-direction: row; /* Volta a ficar lado a lado se houver espaço */
+        gap: 20px;
+    }
 }
 
 /* Cards com sombra suave */
@@ -162,3 +174,4 @@ input:focus, select:focus {
 .btn-excel:active {
     transform: scale(0.98);
 }
+
