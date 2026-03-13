@@ -35,7 +35,7 @@ body {
 
 /* Ajuste do Título: Menos espaço, mais peso */
 .titulo-sistema { 
-    color: var(--azul) !important;
+    color: #28a745;
     text-transform: uppercase;
     margin: 0;
     font-size: 1.8rem; /* Tamanho levemente maior */
