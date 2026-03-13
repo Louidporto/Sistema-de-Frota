@@ -172,3 +172,44 @@ database.ref('viagens').on('value', (snapshot) => {
 });
 
 atualizarDataHora();
+document.getElementById('btnExportar').onclick = function() {
+    database.ref('viagens').once('value', (snapshot) => {
+        const dadosParaExportar = [];
+        
+        snapshot.forEach((child) => {
+            const v = child.val();
+            
+            // Apenas viagens concluídas vão para o Excel
+            if (v.status === 'concluido') {
+                dadosParaExportar.push({
+                    "Veículo": v.veiculo,
+                    "Motorista": v.motorista,
+                    "Data Saída": v.dataSaida.split('-').reverse().join('/'),
+                    "Hora Saída": v.horaSaida,
+                    "KM Inicial": v.kmSaida,
+                    "Data Retorno": v.dataRetorno.split('-').reverse().join('/'),
+                    "Hora Retorno": v.horaRetorno,
+                    "KM Final": v.kmRetorno,
+                    "KM Rodado": parseFloat(v.kmRetorno) - parseFloat(v.kmSaida),
+                    "Motivo": v.motivo,
+                    "NF": v.nf,
+                    "Valor NF": v.valorNf,
+                    "Observação": v.descricaoMotivo
+                });
+            }
+        });
+
+        if (dadosParaExportar.length === 0) {
+            return alert("Não há dados finalizados para exportar!");
+        }
+
+        // Cria a planilha
+        const worksheet = XLSX.utils.json_to_sheet(dadosParaExportar);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Viagens");
+
+        // Gera o arquivo e inicia o download
+        XLSX.writeFile(workbook, "Relatorio_KM_MACBRAS.xlsx");
+    });
+};
+
