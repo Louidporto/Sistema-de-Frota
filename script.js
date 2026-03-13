@@ -68,7 +68,7 @@ document.getElementById('btnLancar').onclick = function() {
 
         // BLOQUEIO 2: KM menor que o último registro
         if (kmInformado < ultimoKmFinalizado) {
-            return alert(`Erro de KM: A última viagem deste veículo terminou com ${ultimoKmFinalizado} KM. Não é permitido iniciar com um valor menor.`);
+            return alert(`Erro de Quilometragem: A última viagem deste veículo terminou com ${ultimoKmFinalizado} Km. Não é permitido iniciar com uma quilometragem  menor.`);
         }
 
         // Se passar nas duas verificações, realiza o push
@@ -115,7 +115,7 @@ document.getElementById('btnConfirmar').onclick = function() {
     database.ref('viagens/' + idAtual).once('value', (snapshot) => {
         const dadosViagem = snapshot.val();
         if (kmF < parseFloat(dadosViagem.kmSaida)) {
-            return alert(`Erro: O KM de retorno (${kmF}) não pode ser menor que o KM de saída (${dadosViagem.kmSaida})!`);
+            return alert(`Erro: O Km de retorno (${kmF}) não pode ser menor que o Km de saída (${dadosViagem.kmSaida})!`);
         }
 
         database.ref('viagens/' + idAtual).update({
