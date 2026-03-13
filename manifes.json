@@ -1,6 +1,6 @@
 {
-  "name": "Sistema de Frota",
-  "short_name": "Sistema de Frota",
+  "name": "Controle de Frota",
+  "short_name": "Controle de Km",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#121212",
