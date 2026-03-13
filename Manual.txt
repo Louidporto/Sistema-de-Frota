@@ -1,0 +1,70 @@
+📖 Manual do Usuário - Sistema Controle de Frota.
+Bem-vindo ao Controle de Frota, o sistema oficial de controle de frota da MACBRAS. Este guia orientará você sobre como registrar saídas, chegadas e gerar relatórios de quilometragem.
+
+1. Instalação no Celular (Passo a Passo)
+Como o sistema é um PWA (aplicativo web), você não precisa baixá-lo na loja de apps.
+
+Abra o navegador do celular e acesse o link do sistema.
+
+Toque nos três pontinhos (Android) ou no ícone de compartilhar (iPhone).
+
+Selecione a opção "Adicionar à tela de início" ou "Instalar aplicativo".
+
+O ícone da MACBRAS aparecerá na sua tela junto com seus outros aplicativos.
+
+2. Como Registrar uma Saída
+Sempre que for iniciar uma viagem, siga estes passos:
+
+Identificação: Selecione o seu nome na lista de Motoristas.
+
+Veículo: Selecione qual veículo você está utilizando (ex: Argo RVX0F35).
+
+Quilometragem: Digite o número exato que aparece no painel do carro.
+
+Nota: O sistema não aceitará um número menor do que o registrado na última viagem deste veículo.
+
+Motivo: Escolha entre "Entrega" (preenchendo os dados da NF) ou "Outros Motivos".
+
+Lançar: Clique no botão azul LANÇAR SAÍDA. O veículo aparecerá na seção "Veículos em Trânsito".
+
+3. Como Finalizar uma Viagem (Chegada)
+Ao retornar à empresa:
+
+Localize o card do seu veículo na seção "Veículos em Trânsito".
+
+Clique no botão FINALIZAR.
+
+No painel que abrirá, digite o KM Final (quilometragem atual no painel).
+
+Nota: O sistema bloqueará o fechamento se o KM final for menor que o KM informado na saída.
+
+Clique em CONFIRMAR CHEGADA. A viagem irá automaticamente para o Histórico.
+
+4. Regras e Travas de Segurança
+Para evitar erros no banco de dados, o sistema possui as seguintes regras:
+
+Veículo Ocupado: Você não consegue abrir uma saída para um carro que já está na rua (em trânsito).
+
+Continuidade de KM: O KM de saída deve ser sempre igual ou maior que o KM de chegada da última pessoa que usou o carro. Se o painel marcar um número menor, entre em contato com o administrador.
+
+Campos Obrigatórios: O sistema não processa registros se o motorista, veículo ou quilometragem não forem informados.
+
+5. Exportação de Relatórios (Apenas Administração)
+Para extrair os dados para o fechamento mensal:
+
+Vá até a seção Histórico.
+
+Clique no botão verde EXPORTAR EXCEL.
+
+Um arquivo chamado MACBRAS_KM.xlsx será baixado. Ele contém:
+
+Nome do motorista e veículo.
+
+Data e hora exatas de saída e chegada.
+
+KM inicial e final.
+
+Cálculo automático do total de quilômetros rodados.
+
+🛠 Suporte Técnico
+Caso encontre algum erro de sistema ou divergência de quilometragem que impeça o lançamento, procure o responsável pelo desenvolvimento.
