@@ -1,0 +1,139 @@
+:root {
+    --azul: #0056b3;       /* Azul Royal Sóbrio */
+    --fundo: #fff;         /* Fundo Branco conforme solicitado */
+    --fundo-card: #f8f9fa; /* Leve cinza para os cards */
+    --texto: #212529;      /* Texto quase preto */
+    --verde: #28a745;     /* Verde Sucesso sóbrio */
+}
+
+/* Reset básico e tipografia */
+body { 
+    font-family: 'Open Sans', Roboto, sans-serif; 
+    background-color: var(--fundo); 
+    color: var(--texto); 
+    margin: 0; 
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.container { 
+    max-width: 500px; 
+    margin: auto; 
+    width: 100%;
+}
+
+/* Cabeçalho com Logo Aumentada */
+.header-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 15px 5px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+h1 { 
+    color: var(--azul) !important;
+    text-transform: uppercase;
+    margin: 0;
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.logo-container {
+    width: 80px;
+    height: 80px;
+}
+
+#logoEmpresa {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Cards com sombra suave */
+.card-painel, .card-viagem, .card-historico {
+    background: var(--fundo-card); 
+    padding: 18px; 
+    border-radius: 12px;
+    border: 1px solid #e9ecef; 
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Sombra para profundidade */
+}
+
+h3 { text-align: center; color: var(--texto); text-transform: uppercase; font-weight: 600;}
+
+label { display: block; font-size: 0.8rem; color: #6c757d; margin-bottom: 5px; font-weight: 600;}
+
+input, select, textarea {
+    width: 100%; 
+    padding: 14px; 
+    background: #fff; /* Fundo branco para os campos de digitação */
+    border: 1px solid #ced4da;
+    color: var(--texto); 
+    border-radius: 8px; 
+    box-sizing: border-box; 
+    font-size: 16px; 
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+    border-color: var(--azul);
+    outline: none;
+}
+
+/* Bordas Verdes (Destaque para automáticos) */
+.input-automatico { 
+    background: #f1f3f5; 
+    color: var(--verde); 
+    font-weight: bold; 
+    border: 2px solid var(--verde) !important; 
+}
+
+.linha-dupla { display: flex; gap: 8px; }
+
+/* Botões Azuis sóbrios */
+.btn-principal { 
+    width: 100%; 
+    background: var(--azul); 
+    color: white; 
+    border: none; 
+    padding: 18px; 
+    border-radius: 10px; 
+    font-weight: bold; 
+    font-size: 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.btn-principal:hover {
+    background: #004494;
+    box-shadow: 0 4px 10px rgba(0,86,179,0.3);
+}
+
+.btn-secundario { 
+    width: 100%; 
+    background: #e9ecef; 
+    padding: 14px; 
+    border-radius: 10px; 
+    margin-top: 10px; 
+    color: #495057;
+    border: 1px solid #ced4da;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Ajustes do Histórico e Cards Ativos */
+.card-viagem { border-left: 6px solid var(--verde); }
+.card-historico { border-left: 6px solid #adb5bd; opacity: 0.95; font-size: 0.85rem; }
+.card-historico h4 { color: var(--azul); margin: 0 0 8px 0; font-size: 1rem; }
+
+/* Modal */
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
+.modal-content { background: #fff; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; border: 1px solid var(--azul); }
+
+.divisor { height: 1px; background: #e9ecef; margin: 25px 0; }
