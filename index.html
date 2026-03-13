@@ -12,6 +12,7 @@
     <link rel="icon" sizes="192x192" href="imagens/logo.png">
     <meta name="theme-color" content="#ff3131">
     <link rel="manifest" href="manifes.json">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -89,6 +90,11 @@
         <h3>Veículos em Trânsito</h3>
         <div id="containerCards"></div>
 
+        <div class="area-acoes">
+        <button id="btnExportar" class="btn-excel">BAIXAR EXCEL (HISTÓRICO)</button>
+        </div>
+        <div id="containerHistorico"></div>
+
         <div class="divisor"></div>
         <h3>Histórico (Concluídos)</h3>
         <div id="containerHistorico"></div>
@@ -113,6 +119,7 @@
 </body>
 
 </html>
+
 
 
 
