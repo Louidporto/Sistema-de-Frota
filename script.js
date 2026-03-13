@@ -28,29 +28,74 @@ document.getElementById('motivoSelecao').onchange = function() {
     document.getElementById('camposOutros').style.display = (val === 'outros') ? 'block' : 'none';
 };
 
+// --- NOVA FUNÇÃO DE LANÇAMENTO COM VERIFICAÇÕES ---
 document.getElementById('btnLancar').onclick = function() {
     const tempo = atualizarDataHora();
-    const dados = {
-        veiculo: document.getElementById('placaVeiculo').value,
-        motorista: document.getElementById('selectMotorista').value,
-        dataSaida: tempo.data,
-        horaSaida: tempo.hora,
-        kmSaida: document.getElementById('kmSaida').value,
-        motivo: document.getElementById('motivoSelecao').value,
-        nf: document.getElementById('nf').value || "",
-        valorNf: document.getElementById('valorNf').value || "",
-        descricaoMotivo: document.getElementById('descricaoMotivo').value || "",
-        status: 'em_transito'
-    };
+    const veiculoSelecionado = document.getElementById('placaVeiculo').value;
+    const kmInformado = parseFloat(document.getElementById('kmSaida').value);
+    const motorista = document.getElementById('selectMotorista').value;
 
-    if(!dados.veiculo || !dados.kmSaida || !dados.motorista) return alert("Erro: Preencha Veículo, Motorista e KM!");
+    if(!veiculoSelecionado || !kmInformado || !motorista) {
+        return alert("Erro: Preencha Veículo, Motorista e KM!");
+    }
 
-    database.ref('viagens').push(dados).then(() => {
-        alert("Saída registrada!");
-        document.getElementById('kmSaida').value = "";
+    // 1. Verificar se o veículo já está em trânsito ou validar KM
+    database.ref('viagens').once('value', (snapshot) => {
+        let emTrânsito = false;
+        let ultimoKmFinalizado = 0;
+
+        snapshot.forEach((child) => {
+            const v = child.val();
+            
+            // Verifica se o veículo já tem um card aberto
+            if (v.veiculo === veiculoSelecionado && v.status === 'em_transito') {
+                emTrânsito = true;
+            }
+
+            // Busca o maior KM finalizado para este veículo específico
+            if (v.veiculo === veiculoSelecionado && v.status === 'concluido') {
+                const kmF = parseFloat(v.kmRetorno);
+                if (kmF > ultimoKmFinalizado) {
+                    ultimoKmFinalizado = kmF;
+                }
+            }
+        });
+
+        // BLOQUEIO 1: Veículo já na rua
+        if (emTrânsito) {
+            return alert(`O veículo ${veiculoSelecionado} já possui uma viagem em aberto! Finalize a anterior primeiro.`);
+        }
+
+        // BLOQUEIO 2: KM menor que o último registro
+        if (kmInformado < ultimoKmFinalizado) {
+            return alert(`Erro de KM: A última viagem deste veículo terminou com ${ultimoKmFinalizado} KM. Não é permitido iniciar com um valor menor.`);
+        }
+
+        // Se passar nas duas verificações, realiza o push
+        const dados = {
+            veiculo: veiculoSelecionado,
+            motorista: motorista,
+            dataSaida: tempo.data,
+            horaSaida: tempo.hora,
+            kmSaida: kmInformado,
+            motivo: document.getElementById('motivoSelecao').value,
+            nf: document.getElementById('nf').value || "",
+            valorNf: document.getElementById('valorNf').value || "",
+            descricaoMotivo: document.getElementById('descricaoMotivo').value || "",
+            status: 'em_transito'
+        };
+
+        database.ref('viagens').push(dados).then(() => {
+            alert("Saída registrada com sucesso!");
+            document.getElementById('kmSaida').value = "";
+            document.getElementById('nf').value = "";
+            document.getElementById('valorNf').value = "";
+            document.getElementById('descricaoMotivo').value = "";
+        });
     });
 };
 
+// --- RESTANTE DO CÓDIGO (MODAL E MONITORAMENTO) ---
 let idAtual = "";
 window.abrirModal = (id, veiculo) => {
     idAtual = id;
@@ -64,20 +109,28 @@ window.abrirModal = (id, veiculo) => {
 document.getElementById('btnFecharModal').onclick = () => document.getElementById('modalRetorno').style.display = 'none';
 
 document.getElementById('btnConfirmar').onclick = function() {
-    const kmF = document.getElementById('kmRetorno').value;
-    if(!kmF) return alert("Informe o KM Final!");
+    const kmF = parseFloat(document.getElementById('kmRetorno').value);
+    
+    // Verificação adicional no fechamento: KM de retorno não pode ser menor que o de saída
+    database.ref('viagens/' + idAtual).once('value', (snapshot) => {
+        const dadosViagem = snapshot.val();
+        if (kmF < parseFloat(dadosViagem.kmSaida)) {
+            return alert(`Erro: O KM de retorno (${kmF}) não pode ser menor que o KM de saída (${dadosViagem.kmSaida})!`);
+        }
 
-    database.ref('viagens/' + idAtual).update({
-        dataRetorno: document.getElementById('dataRetorno').value,
-        horaRetorno: document.getElementById('horaRetorno').value,
-        kmRetorno: kmF,
-        status: 'concluido'
-    }).then(() => {
-        document.getElementById('modalRetorno').style.display = 'none';
-        document.getElementById('kmRetorno').value = "";
+        database.ref('viagens/' + idAtual).update({
+            dataRetorno: document.getElementById('dataRetorno').value,
+            horaRetorno: document.getElementById('horaRetorno').value,
+            kmRetorno: kmF,
+            status: 'concluido'
+        }).then(() => {
+            document.getElementById('modalRetorno').style.display = 'none';
+            document.getElementById('kmRetorno').value = "";
+        });
     });
 };
 
+// Monitoramento para exibir os cards
 database.ref('viagens').on('value', (snapshot) => {
     const containerCards = document.getElementById('containerCards');
     const containerHistorico = document.getElementById('containerHistorico');
