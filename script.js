@@ -129,6 +129,31 @@ document.getElementById('btnConfirmar').onclick = function() {
         });
     });
 };
+document.getElementById('btnLancar').onclick = async function() {
+    // 1. Captura os valores dos campos
+    const veiculo = document.getElementById('placaVeiculo').value;
+    const motorista = document.getElementById('selectMotorista').value;
+    const km = document.getElementById('kmSaida').value;
+    const motivo = document.getElementById('motivoSelecao').value;
+
+    // 2. A VERIFICAÇÃO: Se algum desses estiver vazio, o sistema para aqui
+    if (!veiculo || !motorista || !km || !motivo) {
+        alert("⚠️ ATENÇÃO: Todos os campos obrigatórios devem ser preenchidos!");
+        return; // O 'return' impede que o código continue e salve no Firebase
+    }
+
+    // 3. Verificação específica para o motivo "Entrega"
+    if (motivo === 'entrega') {
+        const nf = document.getElementById('nf').value;
+        if (!nf) {
+            alert("⚠️ Por favor, informe o número da Nota Fiscal.");
+            return;
+        }
+    }
+
+    // Se passou por todos os IFs acima, o código continua para as travas de KM...
+    // [Restante da lógica de verificação de KM e Firebase]
+};
 
 // Monitoramento para exibir os cards
 database.ref('viagens').on('value', (snapshot) => {
