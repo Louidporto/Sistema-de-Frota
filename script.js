@@ -646,5 +646,11 @@ database.ref('agendamentos').on('value', (snapshot) => {
     });
 });
 
+window.excluirAgendamento = (id) => {
+    if(confirm("Deseja realmente excluir este agendamento?")) {
+        database.ref('agendamentos/' + id).remove();
+    }
+};
+
 
 
