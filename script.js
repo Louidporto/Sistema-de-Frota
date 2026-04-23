@@ -1,9 +1,8 @@
 /**
  * SISTEMA - GESTÃO DE FROTA MACBRAS
- * Configurações e Lógica de Negócio
  */
 
-// 1. CONFIGURAÇÃO E INICIALIZAÇÃO DO FIREBASE
+// 1. CONFIGURAÇÃO FIREBASE
 const firebaseConfig = {
     apiKey: "AIzaSyCpSqGHy3YTnN-IkB42YnNiOdY6Y5MAIEY",
     authDomain: "controle-km-35-37.firebaseapp.com",
@@ -14,10 +13,19 @@ const firebaseConfig = {
     appId: "1:876899977468:web:f91bffd951a65f7fb9ef79"
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const database = firebase.database();
 
-// 2. FUNÇÕES DE UTILIDADE
+// 2. CONFIGURAÇÃO DA FROTA
+const veiculosFrota = [
+    { nome: "Argo", placa: "RVX0F35", foto: "imagens/FIAT-ARGO35.webp" },
+    { nome: "Argo", placa: "RVX0F37", foto: "imagens/FIAT-ARGO37.webp" },
+    { nome: "Ducato", placa: "PYI2E43", foto: "imagens/ducato.jpg" }
+];
+
+// 3. FUNÇÕES DE UTILIDADE
 function atualizarDataHora() {
     const agora = new Date();
     const data = agora.toLocaleDateString('pt-br').split('/').reverse().join('-');
@@ -25,204 +33,186 @@ function atualizarDataHora() {
     return { data, hora };
 }
 
-// 3. CONSTRUÇÃO DINÂMICA DO MODAL DE SAÍDA (VIA JS)
-function criarModalSaida() {
-    const tempo = atualizarDataHora();
-    const dataFormatada = tempo.data.split('-').reverse().join('/');
+// 4. RENDERIZAÇÃO DO MURAL DE CARDS (SAÍDA)
+function renderizarMuralVeiculos() {
+    const container = document.getElementById('containerCardsVeiculos');
+    if (!container) return;
+    container.innerHTML = ""; 
 
-    const modalHtml = `
-        <div id="modalSaida" class="modal" style="display: flex;">
-            <div class="modal-content">
-                <h3>REGISTRAR SAÍDA</h3>
-                <div class="grid-tempo">
-                    <div class="grupo-input">
-                        <label>Data de Saída</label>
-                        <input type="text" value="${dataFormatada}" class="input-destaque-verde" readonly>
-                    </div>
-                    <div class="grupo-input">
-                        <label>Hora de Saída</label>
-                        <input type="text" value="${tempo.hora}" class="input-destaque-verde" readonly>
-                    </div>
-                </div>
-                <div class="grupo-input">
-                    <label>Veículo</label>
-                    <select id="placaVeiculo">
-                        <option value="">Selecione o Veículo</option>
-                        <option value="Argo RVX0F35">Argo RVX0F35</option>
-                        <option value="Argo RVX0F37">Argo RVX0F37</option>
-                        <option value="Ducato PYI2E43">Ducato PYI2E43</option>
-                    </select>
-                </div>
+    veiculosFrota.forEach(v => {
+        const identificador = `${v.nome} ${v.placa}`;
+        const card = document.createElement('div');
+        card.className = 'card-veiculo-saida';
+        
+        // Criamos um ID único para o container de combustível deste card
+        const fuelId = `fuel-${v.placa.replace(/\s+/g, '')}`;
 
-                <div id="containerNivelSaida" style="margin: 15px 0; display: none; border: 1px solid #ddd; padding: 10px; border-radius: 8px; background: #fff;">
-                    <label style="font-size: 0.75rem; color: #666; display: block; margin-bottom: 8px; font-weight: bold;">
-                        ⛽ ÚLTIMO NÍVEL REGISTRADO:
-                    </label>
-                    <div id="graficoCombustivelSaida" style="display: flex; gap: 3px; background: #eee; padding: 4px; border-radius: 4px;">
-                        </div>
-                    <div id="textoNivelSaida" style="text-align: center; font-weight: bold; font-size: 0.85rem; margin-top: 5px; color: #28a745;">
-                        --/12
-                    </div>
-                </div>
-                <div class="grupo-input">
-                    <label>Motorista</label>
-                    <select id="selectMotorista">
-                        <option value="">Selecione o Motorista</option>
-                        <option value="Marcelo Motta Cardoso">Marcelo Motta Cardoso</option>
-                        <option value="Daniela Claudia">Daniela Claudia</option>
-                        <option value="Gabriel Louid Da Cunha Porto">Gabriel Louid da Cunha Porto</option>
-                        <option value="Carlos Eduardo de Faria">Carlos Eduardo de Faria</option>
-                        <option value="Gracy Theodoro Juniorr">Gracy Theodoro Junior</option>
-                        <option value="Grace Melody Maciel">Grace Melody Maciel</option>
-                        <option value="Ricardo Marçal da Silva">Ricardo Marçal da Silva</option>
-                        <option value="Roberto Assis Silva">Roberto Assis Silva</option>
-                        <option value="Eduardo de souza diniz">Eduardo de souza diniz</option>
-                        <option value="Cibely Carvalho de Lucas">Cibely Carvalho de Lucas</option>
-                    </select>
-                </div>
-                <div class="grupo-input">
-                    <label>Quilometragem Inicial</label>
-                    <input type="number" id="kmSaida" placeholder="Ex: 12500">
-                </div>
-                <div class="grupo-input">
-                    <label>Motivo</label>
-                    <select id="motivoSelecao">
-                        <option value="">Selecione o motivo...</option>
-                        <option value="entrega">Entrega</option>
-                        <option value="outros">Outros Motivos</option>
-                    </select>
-                </div>
-                <div id="camposEntrega" style="display: none;">
-                    <input type="text" id="nf" placeholder="Número da(s) NF(s) Ex: 9999, 9999">
-                    <input type="number" id="valorNf" placeholder="Soma do Valor da(s) NF(s) R$">
-                </div>
-                <div id="camposOutros" style="display: none;">
-                    <textarea id="descricaoMotivo" placeholder="Descreva o motivo..."></textarea>
-                </div>
-                <button type="button" class="btn-principal" id="btnExecutarLancar">LANÇAR SAÍDA</button>
-                <button class="btn-secundario" id="btnCancelarSaida">CANCELAR</button>
+        // Renderiza o esqueleto do card imediatamente
+        card.innerHTML = `
+            <img src="${v.foto}" class="img-veiculo-card" onerror="this.src='https://via.placeholder.com/150?text=Frota'">
+            <span class="nome-veiculo-card">${v.nome}</span>
+            <span class="placa-veiculo-card">${v.placa}</span>
+            <label clas="nivel-combustivel-card"> Combustivel </label>
+            <div class="mini-combustivel" id="${fuelId}"> 
+                <div class="shimmer-loader"></div> </div>
+        `;
+        
+        container.appendChild(card);
+        card.onclick = () => abrirFormularioSaidaDireto(identificador);
+
+        // BUSCA O ÚLTIMO REGISTRO APENAS DESTE VEÍCULO
+        database.ref('viagens')
+            .orderByChild('veiculo')
+            .equalTo(identificador)
+            .limitToLast(1) // <--- O segredo está aqui: busca APENAS 1 registro
+            .once('value', snap => {
+                let nivel = 12; // Padrão cheio se não houver registros
+                snap.forEach(child => {
+                    const dados = child.val();
+                    // Se estiver em trânsito, usa nível de saída. Se finalizado, usa o final.
+                    nivel = dados.status === 'em_transito' ? dados.nivelCombustivel : (dados.nivelCombustivelFinal || dados.nivelCombustivel);
+                });
+
+                // Atualiza apenas o pedaço do combustível no card já existente
+                const fuelDiv = document.getElementById(fuelId);
+                if (fuelDiv) {
+                    fuelDiv.innerHTML = Array.from({length: 12}, (_, i) => 
+                        `<div class="palito-mini ${i < nivel ? 'cheio' : ''}"></div>`
+                    ).join('');
+                }
+            });
+    });
+}
+
+// Função global para alternar os campos no modal de saída
+window.toggleCamposMotivo = function(valor) {
+    const camposEntrega = document.getElementById('camposEntrega');
+    const campoOutros = document.getElementById('campoOutros');
+    
+    if (camposEntrega && campoOutros) {
+        if (valor === 'Entrega') {
+            camposEntrega.style.display = 'block';
+            campoOutros.style.display = 'none';
+        } else if (valor === 'Outros') {
+            camposEntrega.style.display = 'none';
+            campoOutros.style.display = 'block';
+        } else {
+            camposEntrega.style.display = 'none';
+            campoOutros.style.display = 'none';
+        }
+    }
+};
+
+function abrirFormularioSaidaDireto(veiculoSelecionado) {
+    const modal = document.createElement('div');
+    modal.className = 'modal-full';
+    const { data, hora } = atualizarDataHora();
+
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h3>Registrar Saída: ${veiculoSelecionado}</h3>
+            
+            <div class="form-group-row">
+                <input type="date" id="dataSaida" value="${data}" readonly class="input-automatico">
+                <input type="time" id="horaSaida" value="${hora}" readonly class="input-automatico">
+            </div>
+
+            <select id="motoristaSaida">
+                <option value="">Selecione o Motorista</option>
+                <option value="Marcelo Motta Cardoso">Marcelo Motta Cardoso</option>
+                <option value="Daniela Claudia">Daniela Claudia</option>
+                <option value="Gabriel Louid Da Cunha Porto">Gabriel Louid da Cunha Porto</option>
+                <option value="Carlos Eduardo de Faria">Carlos Eduardo de Faria</option>
+                <option value="Gracy Theodoro Junior">Gracy Theodoro Junior</option>
+                <option value="Grace Melody Maciel">Grace Melody Maciel</option>
+                <option value="Ricardo Marçal da Silva">Ricardo Marçal da Silva</option>
+                <option value="Roberto Assis Silva">Roberto Assis Silva</option>
+                <option value="Eduardo de souza diniz">Eduardo de souza diniz</option>
+                <option value="Cibely Carvalho de Lucas">Cibely Carvalho de Lucas</option>
+            </select>
+
+            <input type="number" id="kmInicial" placeholder="KM Inicial do Veículo">
+
+            <select id="motivoSaida" onchange="toggleCamposMotivo(this.value)">
+                <option value="">Motivo da Saída</option>
+                <option value="Entrega">Entrega</option>
+                <option value="Outros">Outros</option>
+            </select>
+
+            <div id="camposEntrega" style="display:none; margin-top: 10px;">
+                <input type="text" id="notasFiscais" placeholder="Nº das Notas Fiscais">
+                <input type="number" id="valorCarga" placeholder="Valor Total da Carga">
+            </div>
+
+            <div id="campoOutros" style="display:none; margin-top: 10px;">
+                <textarea id="descricaoMotivo" placeholder="Descreva o motivo detalhadamente..." rows="3" style="width:100%; padding:8px; border-radius:8px; border:1px solid #ccc; font-family: sans-serif;"></textarea>
+            </div>
+
+            <div class="container-botoes" style="margin-top: 20px;">
+                <button class="btn-principal" id="btnSalvarSaida">LANÇAR SAÍDA</button>
+                <button class="btn-secundario" onclick="this.closest('.modal-full').remove(); document.body.style.overflow='auto';">CANCELAR</button>
             </div>
         </div>
     `;
 
-    // Insere o modal no final do body
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
 
-// --- CORREÇÃO AQUI: Capturando o ID correto 'placaVeiculo' ---
-const selectVeic = document.getElementById('placaVeiculo'); 
+    document.getElementById('btnSalvarSaida').onclick = () => {
+        salvarSaidaFirebase(veiculoSelecionado);
+    };
+}
 
-selectVeic.onchange = function() {
-    const vNome = this.value;
-    const container = document.getElementById('containerNivelSaida');
-    const grafico = document.getElementById('graficoCombustivelSaida');
-    const texto = document.getElementById('textoNivelSaida');
+function salvarSaidaFirebase(veiculo) {
+    const km = document.getElementById('kmInicial').value;
+    const motorista = document.getElementById('motoristaSaida').value;
+    const motivo = document.getElementById('motivoSaida').value;
+    const tempo = atualizarDataHora();
 
-    if (!vNome) {
-        container.style.display = 'none';
-        return;
+    if(!km || !motorista || !motivo) {
+        return alert("Erro: Preencha KM, Motorista e Motivo!");
     }
 
-    // Inicia estado de busca
-    container.style.display = 'block';
-    grafico.innerHTML = "";
-    texto.innerText = "Consultando Firebase...";
+    // Coleta dados extras dependendo do motivo
+    const nf = document.getElementById('notasFiscais').value || "";
+    const valorCarga = document.getElementById('valorCarga').value || "";
+    const descricao = document.getElementById('descricaoMotivo').value || "";
 
-    // Busca a última viagem concluída deste veículo
-    database.ref('viagens')
-        .orderByChild('veiculo')
-        .equalTo(vNome)
-        .limitToLast(10) 
-        .once('value', (snap) => {
-            let nivelEncontrado = 0;
-
-            if (snap.exists()) {
-                const dados = Object.values(snap.val());
-                // Pega a última que foi finalizada (tem kmRetorno ou nivelCombustivel)
-                const ultimaConcluida = dados.reverse().find(v => v.status === 'concluido' && v.nivelCombustivel !== undefined);
-                
-                if (ultimaConcluida) {
-                    nivelEncontrado = parseInt(ultimaConcluida.nivelCombustivel);
-                }
-            }
-
-            // Desenha os 12 palitos do gráfico
-            grafico.innerHTML = ""; 
-            for (let i = 1; i <= 12; i++) {
-                const palito = document.createElement('div');
-                palito.style.flex = "1";
-                palito.style.height = "12px";
-                palito.style.borderRadius = "2px";
-                
-                if (i <= nivelEncontrado) {
-                    palito.style.backgroundColor = (nivelEncontrado <= 3) ? "#ff4444" : "#28a745";
-                } else {
-                    palito.style.backgroundColor = "#ddd"; 
-                }
-                grafico.appendChild(palito);
-            }
-
-            texto.innerText = nivelEncontrado + "/12 Marcadores";
-            texto.style.color = (nivelEncontrado <= 3) ? "red" : "#28a745";
-        });
-};
-
-    // Eventos internos do modal criado
-    document.getElementById('motivoSelecao').onchange = function() {
-        document.getElementById('camposEntrega').style.display = (this.value === 'entrega') ? 'block' : 'none';
-        document.getElementById('camposOutros').style.display = (this.value === 'outros') ? 'block' : 'none';
+    const dados = {
+        veiculo: veiculo,
+        motorista: motorista,
+        kmSaida: parseFloat(km),
+        dataSaida: tempo.data,
+        horaSaida: tempo.hora,
+        motivo: motivo,
+        nf: nf,
+        valorNf: valorCarga,
+        descricaoMotivo: descricao, // Aqui salva a descrição do campo 'Outros'
+        status: 'em_transito'
     };
 
-    document.getElementById('btnCancelarSaida').onclick = () => fecharModalSaida();
-    document.getElementById('btnExecutarLancar').onclick = () => processarLancarSaida(tempo);
-}
-
-function fecharModalSaida() {
-    const m = document.getElementById('modalSaida');
-    if(m) m.remove(); // Remove o elemento do DOM completamente
-}
-
-// 4. LÓGICA DE PROCESSAMENTO (SAÍDA)
-function processarLancarSaida(tempo) {
-    const veiculo = document.getElementById('placaVeiculo').value;
-    const km = parseFloat(document.getElementById('kmSaida').value);
-    const motorista = document.getElementById('selectMotorista').value;
-
-    if(!veiculo || !km || !motorista) return alert("Erro: Preencha todos os campos!");
-
-    database.ref('viagens').once('value', (snap) => {
-        let emTrânsito = false;
-        let ultimoKm = 0;
-
-        snap.forEach((child) => {
-            const v = child.val();
-            if (v.veiculo === veiculo && v.status === 'em_transito') emTrânsito = true;
-            if (v.veiculo === veiculo && v.status === 'concluido') {
-                if (parseFloat(v.kmRetorno) > ultimoKm) ultimoKm = parseFloat(v.kmRetorno);
-            }
-        });
-
-        if (emTrânsito) return alert("Veículo já está em trânsito!");
-        if (km < ultimoKm) return alert(`KM inválido! Último registro: ${ultimoKm}`);
-
-        const dados = {
-            veiculo, motorista, kmSaida: km,
-            dataSaida: tempo.data, horaSaida: tempo.hora,
-            motivo: document.getElementById('motivoSelecao').value,
-            nf: document.getElementById('nf').value || "",
-            valorNf: document.getElementById('valorNf').value || "",
-            descricaoMotivo: document.getElementById('descricaoMotivo').value || "",
-            status: 'em_transito'
-        };
-
-        database.ref('viagens').push(dados).then(() => {
-            alert("Sucesso!");
-            fecharModalSaida();
-        });
+    database.ref('viagens').push(dados).then(() => {
+        alert("Saída registrada com sucesso!");
+        document.body.style.overflow = 'auto';
+        location.reload(); 
+    }).catch(erro => {
+        console.error("Erro ao salvar:", erro);
+        alert("Erro ao salvar no banco de dados.");
     });
 }
 
-// 5. GATILHOS DE INTERFACE
-document.getElementById('btnAbrirSaida').onclick = () => criarModalSaida();
+// 7. INICIALIZAÇÃO ÚNICA
+window.addEventListener('load', () => {
+    renderizarMuralVeiculos();
+    // Verifica se o botão antigo existe antes de tentar usar
+    const btnAntigo = document.getElementById('btnAbrirSaida');
+    if(btnAntigo) btnAntigo.onclick = () => alert("Use os cards acima!");
+});
+
+// Funções de suporte (toggle de campos, etc) devem ser mantidas...
+function toggleCamposMotivo(valor) {
+    document.getElementById('camposEntrega').style.display = (valor === 'Entrega') ? 'block' : 'none';
+}
 
 // 6. LÓGICA DE RETORNO (MODAL JÁ EXISTENTE NO HTML OU ADAPTADO)
 let idAtual = "";
@@ -309,8 +299,8 @@ document.getElementById('btnConfirmar').onclick = function() {
     });
 };
 
-// 7. RENDERIZAÇÃO E HISTÓRICO (FORMATO CARROSSEL)
-database.ref('viagens').on('value', (snap) => {
+// limitToLast(15) traz as últimas 15 movimentações (ajuste o número conforme desejar)
+database.ref('viagens').limitToLast(15).on('value', (snapshot) => {
     const cCards = document.getElementById('containerCards');
     const cHist = document.getElementById('containerHistorico');
     
@@ -318,9 +308,13 @@ database.ref('viagens').on('value', (snap) => {
     cCards.innerHTML = ""; 
     cHist.innerHTML = "";
     
-    snap.forEach((child) => {
+    // CORREÇÃO: Mudar de "snap" para "snapshot" para coincidir com o parâmetro acima
+    snapshot.forEach((child) => {
         const v = child.val();
-        // Formata a data de Saída (DD/MM) para economizar espaço no card
+        
+        // Proteção para caso existam dados antigos sem data de saída
+        if(!v.dataSaida) return;
+
         const dataS = v.dataSaida.split('-').reverse().slice(0, 2).join('/');
         
         if(v.status === 'em_transito') {
@@ -329,7 +323,8 @@ database.ref('viagens').on('value', (snap) => {
             div.innerHTML = `
                 <div>
                     <h4>${v.veiculo}</h4>
-                    <p>👤 <b>${v.motorista}</b></p> <p>🕒 Saída: ${dataS} - ${v.horaSaida}</p>
+                    <p>👤 <b>${v.motorista}</b></p> 
+                    <p>🕒 Saída: ${dataS} - ${v.horaSaida}</p>
                     <p>📍 KM Inicial: ${v.kmSaida}</p>
                     ${v.nf ? `<p><b>NF:</b> ${v.nf} (R$ ${v.valorNf})</p>` : ''}
                     ${v.descricaoMotivo ? `<p><b>Obs:</b> ${v.descricaoMotivo}</p>` : ''}
@@ -340,10 +335,8 @@ database.ref('viagens').on('value', (snap) => {
         } else {
             const divH = document.createElement('div');
             divH.className = 'card-historico';
-            // Formata a data de Retorno (DD/MM)
             const dataR = v.dataRetorno ? v.dataRetorno.split('-').reverse().slice(0, 2).join('/') : "";
-            const kmTotal = v.kmRetorno - v.kmSaida;
-
+            
             divH.innerHTML = `
                 <h4>${v.veiculo}</h4>
                 <p>👤 ${v.motorista}</p>
@@ -353,7 +346,7 @@ database.ref('viagens').on('value', (snap) => {
                 ${v.nf ? `<p><b>NF:</b> ${v.nf} (R$ ${v.valorNf})</p>` : ''}
                 ${v.descricaoMotivo ? `<p><b>Obs:</b> ${v.descricaoMotivo}</p>` : ''}
             `;
-            // O prepend garante que o histórico mais recente fique na primeira posição (esquerda) do carrossel
+            // O prepend coloca o registro mais novo no início do carrossel
             cHist.prepend(divH);
         }
     });
