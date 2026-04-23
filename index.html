@@ -4,89 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Frota</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    
     <link rel="icon" type="image/png" href="imagens/logo.png">    
     <link rel="icon" sizes="192x192" href="imagens/logo.png">
     <meta name="theme-color" content="#0056b3">
     <link rel="manifest" href="manifes.json">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
- <div class="container">
-    <header class="header-logo">
-        <div class="logo-container">
-            <img src="imagens/logo.png" alt="Logo Empresa" id="logoEmpresa">
+    <div class="container">
+        <header class="header-logo">
+            <div class="logo-container">
+                <img src="imagens/logo.png" alt="Logo Empresa" id="logoEmpresa">
+            </div>
+            <h1 class="titulo-sistema">Controle de Frota</h1>
+        </header>
+
+        <div class="area-acoes-topo">
+ 
+            <h2 style="text-align: center; margin-bottom: 15px;">SELECIONE O VEICULO:</h2>
+            <div id="containerCardsVeiculos" class="grid-veiculos"></div>
+
+
+            <div class="container-botoes">
+                <button id="btnAbrirAbastecimento" class="btn-abastecimento-fixo" title="Registrar Abastecimento">⛽</button>
+                <button id="btnAbrirAgendamento" class="btn-abastecimento-fixo" title="Agendar saida">📅</button>
+            </div>
         </div>
-        <h1 class="titulo-sistema">Controle de Frota</h1>
-    </header>
 
-    <div class="area-acoes-topo">
-        <button id="btnAbrirSaida" class="btn-principal">🚀 CLIQUE AQUI PARA REGISTRAR SUA SAIDA</button>
+        <div id="areaAgendamentoDinamica"></div>
 
-        <div class="container-botoes">
-        <button id="btnAbrirAbastecimento" class="btn-abastecimento-fixo" title="Registrar Abastecimento">
-        ⛽</button>
-        <button id="btnAbrirAgendamento" class="btn-abastecimento-fixo" title="Agendar saida">📅</button>
+        <div class="divisor"></div>
+        <h3>Veículos em Trânsito</h3>
+        <div id="containerCards"></div>
+
+        <div class="divisor"></div>
+        <h3>Histórico (Concluídos)</h3>
+        <div id="containerHistorico"></div>
+
+        <div class="area-acoes">
+            <button id="btnExportar" class="btn-excel">BAIXAR EXCEL (HISTÓRICO)</button>
         </div>
     </div>
 
-    <div id="areaAgendamentoDinamica"></div>
-
-    <div class="divisor"></div>
-    <h3>Veículos em Trânsito</h3>
-    <div id="containerCards"></div>
-
-    <div class="divisor"></div>
-    <h3>Histórico (Concluídos)</h3>
-    <div id="containerHistorico"></div>
-
-    <div class="area-acoes">
-        <button id="btnExportar" class="btn-excel">BAIXAR EXCEL (HISTÓRICO)</button>
-    </div>
-</div>
-
-<div id="modalRetorno" class="modal" style="display: none;">
-    <div class="modal-content">
-        <h3 id="labelVeiculoModal">Finalizar</h3>
-        <div class="linha-dupla">
-            <input type="date" id="dataRetorno" readonly class="input-automatico">
-            <input type="time" id="horaRetorno" readonly class="input-automatico">
-        </div>
-        <input type="number" id="kmRetorno" placeholder="Digite o KM Final">
-
-        <div class="grupo-combustivel" style="margin-top: 20px;">
-            <label style="display: block; margin-bottom: 10px;">⛽ Nível do Combustível na Chegada</label>
+    <div id="modalRetorno" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3 id="labelVeiculoModal">Finalizar</h3>
             
-            <div id="seletorNivelChegada" style="display: flex; gap: 4px; background: #f0f0f0; padding: 8px; border-radius: 6px; border: 1px solid #ddd; cursor: pointer;">
-                </div>
-            
-            <div style="display: flex; justify-content: space-between; margin-top: 8px; font-weight: bold;">
-                <span style="font-size: 0.8rem; color: #666;">VAZIO (E)</span>
-                <span id="txtNivelChegada" style="color: #28a745;">0/12</span>
-                <span style="font-size: 0.8rem; color: #666;">CHEIO (F)</span>
+            <div class="linha-dupla">
+                <input type="date" id="dataRetorno" readonly class="input-automatico">
+                <input type="time" id="horaRetorno" readonly class="input-automatico">
             </div>
             
-            <input type="hidden" id="valorNivelFinal" value="0">
-        </div>
+            <input type="number" id="kmRetorno" placeholder="Digite o KM Final">
 
-        <button class="btn-principal" id="btnConfirmar">CONFIRMAR CHEGADA</button>
-        <button class="btn-secundario" id="btnFecharModal">VOLTAR</button>
+            <div class="grupo-combustivel" style="margin-top: 20px;">
+                <label style="display: block; margin-bottom: 10px;">⛽ Nível do Combustível na Chegada</label>
+                
+                <div id="seletorNivelChegada" style="display: flex; gap: 4px; background: #f0f0f0; padding: 8px; border-radius: 6px; border: 1px solid #ddd; cursor: pointer;">
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 8px; font-weight: bold;">
+                    <span style="font-size: 0.8rem; color: #666;">VAZIO (E)</span>
+                    <span id="txtNivelChegada" style="color: #28a745;">0/12</span>
+                    <span style="font-size: 0.8rem; color: #666;">CHEIO (F)</span>
+                </div>
+                
+                <input type="hidden" id="valorNivelFinal" value="0">
+            </div>
+
+            <button class="btn-principal" id="btnConfirmar">CONFIRMAR CHEGADA</button>
+            <button class="btn-secundario" id="btnFecharModal">VOLTAR</button>
+        </div>
     </div>
-</div>
+
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <script src="script.js"></script>
 </body>
-
 </html>
-
-
-
-
-
-
-
