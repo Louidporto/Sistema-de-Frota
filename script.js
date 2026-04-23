@@ -52,7 +52,7 @@ function renderizarMuralVeiculos() {
             <img src="${v.foto}" class="img-veiculo-card" onerror="this.src='https://via.placeholder.com/150?text=Frota'">
             <span class="nome-veiculo-card">${v.nome}</span>
             <span class="placa-veiculo-card">${v.placa}</span>
-            <label clas="nivel-combustivel-card"> Combustivel </label>
+            <label clas="nivel-combustivel-card"> Combustivel: </label>
             <div class="mini-combustivel" id="${fuelId}"> 
                 <div class="shimmer-loader"></div> </div>
         `;
