@@ -352,14 +352,29 @@ database.ref('viagens').limitToLast(15).on('value', (snapshot) => {
     });
 });
 
-// 8. EXCEL
 document.getElementById('btnExportar').onclick = function() {
     database.ref('viagens').once('value', (snap) => {
         const excelData = [];
+        
         snap.forEach(c => {
             const d = c.val();
-            if(d.status === 'concluido') excelData.push({ Veiculo: d.veiculo, Motorista: d.motorista, Saida: d.dataSaida + d.horaSaida, KM_Ini: d.kmSaida, Chegada: d.dataRetorno + d.horaRetorno, KM_Fin: d.kmRetorno, Total: d.kmRetorno - d.kmSaida });
+            
+            if(d.status === 'concluido') {
+                excelData.push({ 
+                    Veiculo: d.veiculo, 
+                    Motorista: d.motorista, 
+                    // Adicionado um espaço entre data e hora para melhor leitura
+                    Saida: `${d.dataSaida} ${d.horaSaida}`, 
+                    KM_Ini: d.kmSaida, 
+                    // Adicionado um espaço entre data e hora
+                    Chegada: `${d.dataRetorno} ${d.horaRetorno}`, 
+                    KM_Fin: d.kmRetorno, 
+                    // Calculando a diferença numérica
+                    Total: Number(d.kmRetorno) - Number(d.kmSaida) 
+                });
+            }
         });
+
         const ws = XLSX.utils.json_to_sheet(excelData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Viagens");
