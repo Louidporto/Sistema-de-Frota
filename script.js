@@ -358,7 +358,7 @@ document.getElementById('btnExportar').onclick = function() {
         const excelData = [];
         snap.forEach(c => {
             const d = c.val();
-            if(d.status === 'concluido') excelData.push({ Veiculo: d.veiculo, Motorista: d.motorista, Saida: d.dataSaida, KM_Ini: d.kmSaida, Chegada: d.dataRetorno, KM_Fin: d.kmRetorno, Total: d.kmRetorno - d.kmSaida });
+            if(d.status === 'concluido') excelData.push({ Veiculo: d.veiculo, Motorista: d.motorista, Saida: d.dataSaida + d.horaSaida, KM_Ini: d.kmSaida, Chegada: d.dataRetorno + d.horaRetorno, KM_Fin: d.kmRetorno, Total: d.kmRetorno - d.kmSaida });
         });
         const ws = XLSX.utils.json_to_sheet(excelData);
         const wb = XLSX.utils.book_new();
