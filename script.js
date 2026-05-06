@@ -140,8 +140,8 @@ function abrirFormularioSaidaDireto(veiculoSelecionado) {
             </select>
 
             <div id="camposEntrega" style="display:none; margin-top: 10px;">
-                <input type="text" id="notasFiscais" placeholder="Nº das Notas Fiscais">
-                <input type="number" id="valorCarga" placeholder="Valor Total da Carga">
+                <input type="Number" id="notasFiscais" placeholder="Nº das Notas Fiscais">
+                <input type="number" id="valorCarga" placeholder="Soma Total da Carga">
             </div>
 
             <div id="campoOutros" style="display:none; margin-top: 10px;">
@@ -366,7 +366,7 @@ document.getElementById('btnExportar').onclick = function() {
                     Data_Saida: d.dataSaida,
                     Hora_Saida: d.horaSaida,  // Nome diferente para não sobrescrever
                     KM_Inicial: d.kmSaida, 
-                    Motivo: d.motivo,
+                    Motivo: d.descricaoMotivo,
                     Nota_Fiscal: d.nf,
                     Valor_Nota_Fiscal: d.valorNf,
                     Data_Chegada: d.dataRetorno,
