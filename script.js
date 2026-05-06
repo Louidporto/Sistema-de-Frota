@@ -360,19 +360,16 @@ document.getElementById('btnExportar').onclick = function() {
             const d = c.val();
             
             if(d.status === 'concluido') {
-                excelData.push({ 
+               excelData.push({ 
                     Veiculo: d.veiculo, 
                     Motorista: d.motorista, 
-                    // Adicionado um espaço entre data e hora para melhor leitura
-                    Saida: `${d.dataSaida}`,
-                    Hora: `${d.horaSaida}`, 
-                    KM_Ini: d.kmSaida, 
-                    // Adicionado um espaço entre data e hora
-                    Chegada: `${d.dataRetorno}`,
-                    Hora: `${d.horaRetorno}`, 
-                    KM_Fin: d.kmRetorno, 
-                    // Calculando a diferença numérica
-                    Total: Number(d.kmRetorno) - Number(d.kmSaida) 
+                    Data_Saida: d.dataSaida,
+                    Hora_Saida: d.horaSaida,  // Nome diferente para não sobrescrever
+                    KM_Inicial: d.kmSaida, 
+                    Data_Chegada: d.dataRetorno,
+                    Hora_Chegada: d.horaRetorno, // Nome diferente para não sobrescrever
+                    KM_Final: d.kmRetorno, 
+                    KM_Total: Number(d.kmRetorno) - Number(d.kmSaida) 
                 });
             }
         });
