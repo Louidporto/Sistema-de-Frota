@@ -366,6 +366,9 @@ document.getElementById('btnExportar').onclick = function() {
                     Data_Saida: d.dataSaida,
                     Hora_Saida: d.horaSaida,  // Nome diferente para não sobrescrever
                     KM_Inicial: d.kmSaida, 
+                    Motivo: d.motivo,
+                    Nota_Fiscal: d.nf,
+                    Valor_Nota_Fiscal: d.valorNf,
                     Data_Chegada: d.dataRetorno,
                     Hora_Chegada: d.horaRetorno, // Nome diferente para não sobrescrever
                     KM_Final: d.kmRetorno, 
