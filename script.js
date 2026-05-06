@@ -364,10 +364,12 @@ document.getElementById('btnExportar').onclick = function() {
                     Veiculo: d.veiculo, 
                     Motorista: d.motorista, 
                     // Adicionado um espaço entre data e hora para melhor leitura
-                    Saida: `${d.dataSaida} ${d.horaSaida}`, 
+                    Saida: `${d.dataSaida}`,
+                    Hora: `${d.horaSaida}`, 
                     KM_Ini: d.kmSaida, 
                     // Adicionado um espaço entre data e hora
-                    Chegada: `${d.dataRetorno} ${d.horaRetorno}`, 
+                    Chegada: `${d.dataRetorno}`,
+                    Hora: `${d.horaRetorno}`, 
                     KM_Fin: d.kmRetorno, 
                     // Calculando a diferença numérica
                     Total: Number(d.kmRetorno) - Number(d.kmSaida) 
