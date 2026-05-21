@@ -124,7 +124,7 @@ function abrirFormularioSaidaDireto(veiculoSelecionado) {
                 <option value="Gabriel Louid Da Cunha Porto">Gabriel Louid da Cunha Porto</option>
                 <option value="Carlos Eduardo de Faria">Carlos Eduardo de Faria</option>
                 <option value="Gracy Theodoro Junior">Gracy Theodoro Junior</option>
-                <option value="Grace Melody Maciel">Grace Melody Maciel</option>
+                <option value="Jorge Euclides">Jorge Euclides</option>
                 <option value="Ricardo Marçal da Silva">Ricardo Marçal da Silva</option>
                 <option value="Roberto Assis Silva">Roberto Assis Silva</option>
                 <option value="Eduardo de souza diniz">Eduardo de souza diniz</option>
