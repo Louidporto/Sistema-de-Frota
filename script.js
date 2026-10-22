@@ -22,6 +22,7 @@ const database = firebase.database();
 const veiculosFrota = [
     { nome: "Argo", placa: "RVX0F35", foto: "imagens/FIAT-ARGO35.webp" },
     { nome: "Argo", placa: "RVX0F37", foto: "imagens/FIAT-ARGO37.webp" },
+    { nome: "Argo", placa: "RVX0F31", foto: "imagens/FIAT-ARGO35.webp" },
     { nome: "Ducato", placa: "PYI2E43", foto: "imagens/ducato.jpg" }
 ];
 
